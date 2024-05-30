@@ -1,11 +1,15 @@
-# noteserv.tcl v1.1 by zeamp
+# noteserv.tcl v1.3 by zeamp
 https://www.zpvy.com
 
 Eggdrop script for storing and displaying notes for users in a channel.
+This script acts as a faux MemoServ / IRC shoutbox, letting you leave
+notes for others who have left or will cycle the IRC channel.
+
 
 Syntax:
 
-!note nickname message
+!noteserv nickname message
+
 
 Notes are stored using SQLite3 and get deleted after being displayed.
 If the backend (DCC/Partyline) output is too verbose, you can edit it.
