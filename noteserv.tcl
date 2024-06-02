@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh
 #
-# noteserv.tcl v1.3 by zeamp
+# noteserv.tcl v1.4 by zeamp
 # https://www.zpvy.com
 #
 # Eggdrop script for storing and displaying notes for users in every channel.
@@ -9,11 +9,17 @@
 # If the backend (DCC/Partyline) output is too verbose, you can edit it.
 #
 #
-# CHANGELOG (v1.2 - v1.3)
+# CHANGELOG:
 #
+# v1.4
+# Switched nick/chan to case-insensitive.
+#
+# v1.3
 # Changed !note command to !noteserv
 # Added setting notes via PRIVMSG (optional, admins)
 #
+#
+# HELP:
 #
 # Syntax: [PUBCHAN] !noteserv <nickname> <message>
 # Alternate: [PRIVMSG] /msg NoteServ !noteserv !noteserv <#channel> <nickname> <message>
@@ -41,9 +47,10 @@ proc add_note {nick host handle channel arg} {
         putserv "NOTICE $nick :NoteServ Usage: !noteserv nickname message"
         return
     }
-    set target [lindex $arg 0]
+    set target [string tolower [lindex $arg 0]]
     set message [join [lrange $arg 1 end] " "]
     set timestamp [clock format [clock seconds] -format "%m-%d-%Y %H:%M"]
+    set channel [string tolower $channel]
     db eval {
         INSERT OR REPLACE INTO notes (channel, nick, sender, message, timestamp) VALUES ($channel, $target, $nick, $message, $timestamp);
     }
@@ -72,8 +79,8 @@ proc privmsg_note {nick uhost handle text} {
     }
 
     # Extract the command parts
-    set channel [lindex $parts 1]
-    set target [lindex $parts 2]
+    set channel [string tolower [lindex $parts 1]]
+    set target [string tolower [lindex $parts 2]]
     set message [join [lrange $parts 3 end] " "]
     set timestamp [clock format [clock seconds] -format "%m-%d-%Y %H:%M"]
 
@@ -90,9 +97,11 @@ proc privmsg_note {nick uhost handle text} {
 # Display a note for a user when they join the channel
 proc show_note {nick uhost handle channel} {
     global db
+    set lower_nick [string tolower $nick]
+    set lower_channel [string tolower $channel]
     putlog "User $nick joined $channel, checking for notes."
     set result [db eval {
-        SELECT sender, message, timestamp FROM notes WHERE channel = $channel AND nick = $nick;
+        SELECT sender, message, timestamp FROM notes WHERE channel = $lower_channel AND nick = $lower_nick;
     }]
     putlog "Query result: $result"
 
@@ -103,7 +112,7 @@ proc show_note {nick uhost handle channel} {
         putlog "Note found for $nick in $channel: $message from $sender at $timestamp"
         putserv "PRIVMSG $channel :Hi $nick - You have a note from $sender: $message  ($timestamp)"
         db eval {
-            DELETE FROM notes WHERE channel = $channel AND nick = $nick;
+            DELETE FROM notes WHERE channel = $lower_channel AND nick = $lower_nick;
         }
         putlog "Note deleted for $nick in $channel after displaying."
     } else {
@@ -133,4 +142,4 @@ bind msg - "!noteserv" privmsg_note
 # Bind the DCC partyline command to delete old notes
 bind dcc n - delete_old_notes
 
-putlog "NoteServ v1.3 by zeamp is now loaded."
+putlog "NoteServ v1.4 by zeamp is now loaded - https://www.zpvy.com"
