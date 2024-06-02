@@ -7,10 +7,10 @@ notes for others who have left or will cycle the IRC channel.
 
 
 Syntax: [PUBCHAN]
-!noteserv <nickname> <message>
+# !noteserv <nickname> <message>
 
 Alternate: [PRIVMSG]
-/msg NoteServ !noteserv !noteserv <#channel> <nickname> <message>
+# /msg NoteServ !noteserv !noteserv <#channel> <nickname> <message>
 
 
 Notes are stored using SQLite3 and get deleted after being displayed.
