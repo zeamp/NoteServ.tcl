@@ -1,5 +1,4 @@
 # noteserv.tcl v1.4 by zeamp
-https://www.abovelinks.com/ze
 
 Eggdrop script for storing and displaying notes for users in a channel.
 This script acts as a faux MemoServ / IRC shoutbox, letting you leave
