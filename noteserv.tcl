@@ -142,4 +142,4 @@ bind msg - "!noteserv" privmsg_note
 # Bind the DCC partyline command to delete old notes
 bind dcc n - delete_old_notes
 
-putlog "NoteServ v1.4 by zeamp is now loaded - https://www.zpvy.com"
+putlog "NoteServ v1.4 by zeamp is now loaded"
